@@ -7,7 +7,9 @@ export const PROMOTIONS_REPOSITORY = Symbol('PROMOTIONS_REPOSITORY');
 
 export interface PromotionsRepository {
   list(): Promise<PromotionRule[]>;
+  findOne(id: string): Promise<PromotionRule | null>;
   create(promotion: PromotionRule): Promise<PromotionRule>;
+  updateOne(promotion: PromotionRule): Promise<PromotionRule | null>;
   saveAll(promotions: PromotionRule[]): Promise<void>;
 }
 
@@ -21,11 +23,33 @@ export class FilePromotionsRepository implements PromotionsRepository {
     return promotions.map((promotion) => ({ ...promotion }));
   }
 
+  async findOne(id: string): Promise<PromotionRule | null> {
+    const promotions = await this.load();
+    const promotion = promotions.find((candidate) => candidate.id === id);
+
+    return promotion ? { ...promotion } : null;
+  }
+
   async create(promotion: PromotionRule): Promise<PromotionRule> {
     const promotions = await this.load();
     promotions.push(promotion);
     await this.persist(promotions);
     return { ...promotion };
+  }
+
+  async updateOne(promotion: PromotionRule): Promise<PromotionRule | null> {
+    const promotions = await this.load();
+    const index = promotions.findIndex(
+      (candidate) => candidate.id === promotion.id,
+    );
+
+    if (index === -1) {
+      return null;
+    }
+
+    promotions[index] = { ...promotion };
+    await this.persist(promotions);
+    return { ...promotions[index] };
   }
 
   async saveAll(promotions: PromotionRule[]): Promise<void> {

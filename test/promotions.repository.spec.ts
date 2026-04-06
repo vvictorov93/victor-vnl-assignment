@@ -52,6 +52,36 @@ describe('FilePromotionsRepository', () => {
     );
   });
 
+  it('should persist an updated promotion', async () => {
+    const repository = new FilePromotionsRepository();
+    const existingPromotion = buildPromotion({ id: 'update-target' });
+    const updatedPromotion = { ...existingPromotion, active: false };
+    mockedFs.access.mockResolvedValue(undefined);
+    mockedFs.readFile.mockResolvedValueOnce(
+      JSON.stringify([existingPromotion]),
+    );
+
+    await expect(repository.updateOne(updatedPromotion)).resolves.toEqual(
+      updatedPromotion,
+    );
+
+    expect(mockedFs.writeFile).toHaveBeenLastCalledWith(
+      expectedFilePath,
+      `${JSON.stringify([updatedPromotion], null, 2)}\n`,
+      'utf-8',
+    );
+  });
+
+  it('should return null when updateOne cannot find the promotion', async () => {
+    const repository = new FilePromotionsRepository();
+    const promotion = buildPromotion({ id: 'missing-update' });
+    mockedFs.access.mockResolvedValue(undefined);
+    mockedFs.readFile.mockResolvedValueOnce('[]');
+
+    await expect(repository.updateOne(promotion)).resolves.toBeNull();
+    expect(mockedFs.writeFile).not.toHaveBeenCalled();
+  });
+
   it('should save all provided promotions', async () => {
     const repository = new FilePromotionsRepository();
     const promotions = [
@@ -79,6 +109,35 @@ describe('FilePromotionsRepository', () => {
     listedPromotions[0].active = false;
 
     await expect(repository.list()).resolves.toEqual([promotion]);
+  });
+
+  it('should return a defensive copy from findOne', async () => {
+    const repository = new FilePromotionsRepository();
+    const promotion = buildPromotion({ id: 'find-one-copy' });
+    mockedFs.access.mockResolvedValue(undefined);
+    mockedFs.readFile.mockResolvedValueOnce(JSON.stringify([promotion]));
+
+    const foundPromotion = await repository.findOne('find-one-copy');
+
+    expect(foundPromotion).toEqual(promotion);
+
+    if (!foundPromotion) {
+      throw new Error('Expected promotion to be found');
+    }
+
+    foundPromotion.active = false;
+
+    await expect(repository.findOne('find-one-copy')).resolves.toEqual(
+      promotion,
+    );
+  });
+
+  it('should return null from findOne when the promotion does not exist', async () => {
+    const repository = new FilePromotionsRepository();
+    mockedFs.access.mockResolvedValue(undefined);
+    mockedFs.readFile.mockResolvedValueOnce('[]');
+
+    await expect(repository.findOne('missing')).resolves.toBeNull();
   });
 
   it('should reject when the data file contains invalid json', async () => {

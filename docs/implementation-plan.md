@@ -200,6 +200,9 @@ Several implementation decisions were made to keep the solution aligned with the
 - The unit test suite initially covered only the service. It was later extended with controller and repository tests, plus negative cases, to better cover the expected behavior.
 - Repository tests originally used real file system access. They were updated to mock `fs.promises` so the tests stay isolated.
 - Test names were standardized to start with `should` to keep the suite consistent.
+- The deactivation lookup originally loaded the full promotions list in the service and then called `.find()`. That was corrected by adding a repository-level `findOne` method and using it for single-promotion lookup.
+- The deactivation write path originally rebuilt the full promotions array in the service and then called `saveAll`. That was corrected by adding a repository-level `updateOne` method for single-promotion writes.
+- The evaluation tie-breaker originally used non-null assertion operators on `minimumCartAmount`. That was corrected by using explicit narrowing instead of `!`.
 
 ## What the Agent Got Wrong Initially and How Scope Was Restored
 

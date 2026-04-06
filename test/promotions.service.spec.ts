@@ -22,7 +22,9 @@ describe('PromotionsService', () => {
   beforeEach(async () => {
     repository = {
       list: jest.fn(),
+      findOne: jest.fn(),
       create: jest.fn(),
+      updateOne: jest.fn(),
       saveAll: jest.fn(),
     };
 
@@ -179,33 +181,43 @@ describe('PromotionsService', () => {
 
   it('should deactivate a promotion and persist the change', async () => {
     const activePromotion = buildPromotion({ id: 'promo-1', active: true });
-    repository.list.mockResolvedValue([activePromotion]);
+    repository.findOne.mockResolvedValue(activePromotion);
+    repository.updateOne.mockResolvedValue({
+      ...activePromotion,
+      active: false,
+    });
 
     const result = await service.deactivate('promo-1');
 
     expect(result.active).toBe(false);
-    expect(repository.saveAll.mock.calls).toHaveLength(1);
-    expect(repository.saveAll.mock.calls[0]?.[0]).toEqual([
-      expect.objectContaining({ id: 'promo-1', active: false }),
-    ]);
+    expect(repository.updateOne.mock.calls[0]?.[0]).toEqual({
+      ...activePromotion,
+      active: false,
+    });
+    expect(repository.list.mock.calls).toHaveLength(0);
+    expect(repository.saveAll.mock.calls).toHaveLength(0);
   });
 
   it('should throw when trying to deactivate a missing promotion', async () => {
-    repository.list.mockResolvedValue([]);
+    repository.findOne.mockResolvedValue(null);
 
     await expect(service.deactivate('missing')).rejects.toBeInstanceOf(
       NotFoundException,
     );
+    expect(repository.list.mock.calls).toHaveLength(0);
+    expect(repository.updateOne.mock.calls).toHaveLength(0);
     expect(repository.saveAll.mock.calls).toHaveLength(0);
   });
 
   it('should not persist when deactivating an already inactive promotion', async () => {
     const inactivePromotion = buildPromotion({ id: 'promo-2', active: false });
-    repository.list.mockResolvedValue([inactivePromotion]);
+    repository.findOne.mockResolvedValue(inactivePromotion);
 
     const result = await service.deactivate('promo-2');
 
     expect(result).toEqual(inactivePromotion);
+    expect(repository.list.mock.calls).toHaveLength(0);
+    expect(repository.updateOne.mock.calls).toHaveLength(0);
     expect(repository.saveAll.mock.calls).toHaveLength(0);
   });
 });

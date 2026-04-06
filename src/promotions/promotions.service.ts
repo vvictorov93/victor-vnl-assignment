@@ -31,8 +31,7 @@ export class PromotionsService {
   }
 
   async deactivate(id: string): Promise<PromotionRule> {
-    const promotions = await this.promotionsRepository.list();
-    const promotion = promotions.find((candidate) => candidate.id === id);
+    const promotion = await this.promotionsRepository.findOne(id);
 
     if (!promotion) {
       throw new NotFoundException(`Promotion ${id} not found`);
@@ -42,9 +41,16 @@ export class PromotionsService {
       return promotion;
     }
 
-    promotion.active = false;
-    await this.promotionsRepository.saveAll(promotions);
-    return promotion;
+    const updatedPromotion = await this.promotionsRepository.updateOne({
+      ...promotion,
+      active: false,
+    });
+
+    if (!updatedPromotion) {
+      throw new NotFoundException(`Promotion ${id} not found`);
+    }
+
+    return updatedPromotion;
   }
 
   async evaluate(
@@ -117,8 +123,18 @@ export class PromotionsService {
       currentWinner.minimumCartAmount !== undefined;
 
     if (candidateHasMinimum && currentWinnerHasMinimum) {
+      const candidateMinimumCartAmount = candidate.minimumCartAmount;
+      const currentWinnerMinimumCartAmount = currentWinner.minimumCartAmount;
+
+      if (
+        candidateMinimumCartAmount === undefined ||
+        currentWinnerMinimumCartAmount === undefined
+      ) {
+        throw new Error('Expected minimum cart amount to be defined');
+      }
+
       const difference =
-        candidate.minimumCartAmount! - currentWinner.minimumCartAmount!;
+        candidateMinimumCartAmount - currentWinnerMinimumCartAmount;
 
       if (difference !== 0) {
         return difference;

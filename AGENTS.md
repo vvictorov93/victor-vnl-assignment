@@ -39,6 +39,9 @@ Prompt updates requested during implementation:
 - move shared promotion test data creation into a factory
 - mock all repository file reads and writes in unit tests
 - clean up documentation wording, typos, and formatting where needed
+- add a repository-level `findOne` lookup instead of fetching the full list and calling `.find()` in the service
+- add a repository-level `updateOne` write instead of rewriting the full list in the service for single-promotion changes
+- remove non-null assertion operators from variables in the implementation
 
 ## AI Usage Notes
 
@@ -74,6 +77,9 @@ The main rule during implementation was simple: the brief stayed in charge, not 
 - Negative cases were also added to the controller and repository tests so the suite covers error propagation and invalid persisted data, not just successful flows.
 - Test names were standardized to start with `should` for consistency across the unit test suite.
 - Repository unit tests were updated to mock all file reads and writes through `fs.promises` so the tests stay fully isolated from the real file system.
+- The deactivation flow was corrected to use a repository-level `findOne` lookup instead of loading the full list and calling `.find()` in the service.
+- The deactivation write path was corrected to use a repository-level `updateOne` operation instead of rebuilding the full list in the service and calling `saveAll`.
+- The evaluation tie-breaker was corrected to avoid non-null assertion operators on `minimumCartAmount` and use explicit narrowing instead.
 - A custom NestJS parameter decorator was considered for promotion inputs, but it was intentionally not added because the controllers already use simple DTO bodies and there was no repeated request-mapping logic to justify it.
 - The implementation was intentionally kept away from edit/delete endpoints, Swagger, and e2e testing even though those are common defaults in NestJS projects.
 
