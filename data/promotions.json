@@ -1,0 +1,90 @@
+[
+  {
+    "id": "promo-vip-de-200",
+    "promotionName": "VIP Germany 15% Off",
+    "promotionType": "percentage",
+    "value": 15,
+    "active": true,
+    "validFrom": "2025-12-15T00:00:00.000Z",
+    "validTo": "2026-01-15T23:59:59.999Z",
+    "priority": 10,
+    "customerGroup": "vip",
+    "country": "DE",
+    "minimumCartAmount": 200,
+    "createdAt": "2025-12-01T09:00:00.000Z"
+  },
+  {
+    "id": "promo-vip-global-100",
+    "promotionName": "VIP Global 10% Off",
+    "promotionType": "percentage",
+    "value": 10,
+    "active": true,
+    "validFrom": "2025-12-01T00:00:00.000Z",
+    "validTo": "2026-01-31T23:59:59.999Z",
+    "priority": 8,
+    "customerGroup": "vip",
+    "minimumCartAmount": 100,
+    "createdAt": "2025-11-20T10:00:00.000Z"
+  },
+  {
+    "id": "promo-de-fixed-50",
+    "promotionName": "Germany 50 Fixed Discount",
+    "promotionType": "fixed_amount",
+    "value": 50,
+    "active": true,
+    "validFrom": "2025-12-20T00:00:00.000Z",
+    "validTo": "2026-01-10T23:59:59.999Z",
+    "priority": 8,
+    "country": "DE",
+    "minimumCartAmount": 200,
+    "createdAt": "2025-12-05T12:00:00.000Z"
+  },
+  {
+    "id": "promo-generic-winter",
+    "promotionName": "Winter 5% Off",
+    "promotionType": "percentage",
+    "value": 5,
+    "active": true,
+    "validFrom": "2025-12-01T00:00:00.000Z",
+    "validTo": "2026-02-01T23:59:59.999Z",
+    "priority": 3,
+    "createdAt": "2025-11-15T08:00:00.000Z"
+  },
+  {
+    "id": "promo-inactive-vip",
+    "promotionName": "Inactive VIP Offer",
+    "promotionType": "percentage",
+    "value": 20,
+    "active": false,
+    "validFrom": "2025-12-01T00:00:00.000Z",
+    "validTo": "2026-01-31T23:59:59.999Z",
+    "priority": 20,
+    "customerGroup": "vip",
+    "createdAt": "2025-11-25T14:00:00.000Z"
+  },
+  {
+    "id": "promo-expired-generic",
+    "promotionName": "Expired Year-End Offer",
+    "promotionType": "fixed_amount",
+    "value": 25,
+    "active": true,
+    "validFrom": "2025-11-01T00:00:00.000Z",
+    "validTo": "2025-12-01T23:59:59.999Z",
+    "priority": 12,
+    "createdAt": "2025-10-20T09:30:00.000Z"
+  },
+  {
+    "promotionName": "VIP New Year Discount 2",
+    "promotionType": "percentage",
+    "value": 15,
+    "validFrom": "2025-12-15T00:00:00.000Z",
+    "validTo": "2026-01-15T23:59:59.999Z",
+    "priority": 10,
+    "customerGroup": "vip",
+    "country": "DE",
+    "minimumCartAmount": 200,
+    "id": "3254a519-055a-49a2-b9ee-ab72df9ec6be",
+    "active": false,
+    "createdAt": "2026-04-05T20:43:29.778Z"
+  }
+]
